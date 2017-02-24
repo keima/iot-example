@@ -32,23 +32,22 @@ class MicroDotLED(device: I2cDevice, @MatrixType matrixType: Int) {
         this.device = device
         this.matrixType = matrixType
         this.matrix = byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0)
-
     }
 
     fun setDecimalPoint(bit: Boolean) {
         when (matrixType) {
             CMD_MATRIX_1 -> {
-                if (bit) {
-                    matrix[MATRIX_1_DECIMAL_POINT].toInt().or(0b10000000)
+                matrix[MATRIX_1_DECIMAL_POINT] = if (bit) {
+                    matrix[MATRIX_1_DECIMAL_POINT].toInt().or(0b10000000).toByte()
                 } else {
-                    matrix[MATRIX_1_DECIMAL_POINT].toInt().and(0b01111111)
+                    matrix[MATRIX_1_DECIMAL_POINT].toInt().and(0b01111111).toByte()
                 }
             }
             CMD_MATRIX_2 -> {
-                if (bit) {
-                    matrix[MATRIX_2_DECIMAL_POINT].toInt().or(0b01000000)
+                matrix[MATRIX_2_DECIMAL_POINT] = if (bit) {
+                    matrix[MATRIX_2_DECIMAL_POINT].toInt().or(0b01000000).toByte()
                 } else {
-                    matrix[MATRIX_2_DECIMAL_POINT].toInt().and(0b10111111)
+                    matrix[MATRIX_2_DECIMAL_POINT].toInt().and(0b10111111).toByte()
                 }
             }
         }
@@ -76,18 +75,18 @@ class MicroDotLED(device: I2cDevice, @MatrixType matrixType: Int) {
         when (matrixType) {
             CMD_MATRIX_1 -> {
                 val b = (0b1 shl x)
-                if (bit) {
-                    matrix[y] = matrix[y].toInt().or(b).toByte()
+                matrix[y] = if (bit) {
+                    matrix[y].toInt().or(b).toByte()
                 } else {
-                    matrix[y] = matrix[y].toInt().and(b.inv()).toByte()
+                    matrix[y].toInt().and(b.inv()).toByte()
                 }
             }
             CMD_MATRIX_2 -> {
                 val b = (0b1 shl y)
-                if (bit) {
-                    matrix[x] = matrix[x].toInt().or(b).toByte()
+                matrix[x] = if (bit) {
+                    matrix[x].toInt().or(b).toByte()
                 } else {
-                    matrix[x] = matrix[x].toInt().and(b.inv()).toByte()
+                    matrix[x].toInt().and(b.inv()).toByte()
                 }
             }
         }

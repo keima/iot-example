@@ -18,7 +18,7 @@ class MicroDotUnit(device: I2cDevice) {
         const val CMD_BRIGHTNESS = 0x19
     }
 
-    lateinit private var leds: ArrayList<MicroDotLED>
+    private var leds: ArrayList<MicroDotLED>
 
     private var device: I2cDevice
 

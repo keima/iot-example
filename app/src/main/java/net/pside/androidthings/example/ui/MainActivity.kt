@@ -18,12 +18,12 @@ package net.pside.androidthings.example.ui
 
 import android.app.Activity
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import com.google.android.things.pio.Gpio
 import com.google.android.things.pio.PeripheralManagerService
 import kotlinx.android.synthetic.main.activity_main.*
 import net.pside.androidthings.example.R
 import net.pside.androidthings.example.event.CloudMessageEvent
+import net.pside.androidthings.example.i2c.BitmapFont
 import net.pside.androidthings.example.i2c.MicroDotPhat
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -46,74 +46,21 @@ import timber.log.Timber
 class MainActivity : Activity() {
 
     lateinit var peripheralService: PeripheralManagerService
-    lateinit var adapter: ArrayAdapter<String>
     lateinit var microDotPhat: MicroDotPhat
 
-    val data = arrayOf(
-            intArrayOf(
-                    0b00100,
-                    0b01100,
-                    0b00100,
-                    0b00100,
-                    0b00100,
-                    0b00100,
-                    0b00100
-            ),
-            intArrayOf(
-                    0b01110,
-                    0b10001,
-                    0b00001,
-                    0b00010,
-                    0b00100,
-                    0b01000,
-                    0b11111
-            ),
-            intArrayOf(
-                    0b01110,
-                    0b10001,
-                    0b00001,
-                    0b01110,
-                    0b00001,
-                    0b10001,
-                    0b01110
-            ),
-            intArrayOf(
-                    0b00010,
-                    0b00110,
-                    0b01010,
-                    0b11111,
-                    0b00010,
-                    0b00010,
-                    0b00010
-            ),
-            intArrayOf(
-                    0b11111,
-                    0b10000,
-                    0b10000,
-                    0b11110,
-                    0b00001,
-                    0b00001,
-                    0b11110
-            ),
-            intArrayOf(
-                    0b01110,
-                    0b10000,
-                    0b10000,
-                    0b11110,
-                    0b10001,
-                    0b10001,
-                    0b01110
-            )
-    )
+    var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         peripheralService = PeripheralManagerService()
+        microDotPhat = MicroDotPhat("I2C1")
 
-        adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
-        listView.adapter = adapter
+        button.setOnClickListener {
+            runPhat(editText.text.toString())
+        }
+
     }
 
     override fun onStart() {
@@ -122,17 +69,7 @@ class MainActivity : Activity() {
 
         Timber.d("available: %s", peripheralService.i2cBusList)
 
-
-        val microDotPhat = MicroDotPhat("I2C1")
-
-        microDotPhat.set(0, data[0])
-        microDotPhat.set(1, data[1])
-        microDotPhat.set(2, data[2])
-        microDotPhat.set(3, data[3])
-        microDotPhat.set(4, data[4])
-        microDotPhat.set(5, data[5])
-
-        microDotPhat.update()
+        runPhat("(^_^)/")
     }
 
     override fun onStop() {
@@ -143,11 +80,21 @@ class MainActivity : Activity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: CloudMessageEvent) {
-        adapter.add(event.message)
-        adapter.notifyDataSetChanged()
+        count++
 
-//        toggleGpio(adapter.count % 2 == 0)
-        blinkPwm(adapter.count % 2 == 0)
+//        toggleGpio(adapter.count % 2 != 0)
+        blinkPwm(count % 2 != 0)
+    }
+
+    private fun runPhat(msg : String) {
+        for (i in 0..5) {
+            if (i >= msg.length) {
+                break
+            }
+            microDotPhat.set(i, BitmapFont.getCharMap(msg[i]))
+        }
+
+        microDotPhat.update()
     }
 
     private fun toggleGpio(isOn: Boolean) {

@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView
-    android:id="@+id/listView"
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Input message max 6 chars"
+        android:inputType="textUri"
+        android:lines="1"
+        android:maxLength="6"
+        android:maxLines="1"
+        />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply" />
+
+</LinearLayout>

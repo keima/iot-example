@@ -7,8 +7,7 @@ class MicroDotPhat(i2cName: String) {
 
     val deviceIds = intArrayOf(0x63, 0x62, 0x61)
 
-    lateinit var units: ArrayList<MicroDotUnit>
-
+    var units: ArrayList<MicroDotUnit>
 
     init {
         val service = PeripheralManagerService()
